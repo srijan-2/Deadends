@@ -200,6 +200,18 @@ def cmd_fingerprint(args, ledger: Optional[Ledger]) -> int:
     return 0
 
 
+def cmd_hook_probe(args, ledger: Optional[Ledger]) -> int:
+    """Hook entrypoint: record a redacted copy of the raw stdin payload. Always exits 0, prints nothing."""
+    from .hooks.log import log_error
+    from .hooks.probe import run_hook_probe
+
+    try:
+        run_hook_probe(args.event, sys.stdin.read())
+    except Exception as exc:  # fail open: a probe must never break the session
+        log_error("hook-probe", exc)
+    return 0
+
+
 def cmd_search(args, ledger: Ledger) -> int:
     project = None if args.all_projects else (args.project or detect_project())
     rows = ledger.search(" ".join(args.query), project=project, limit=args.limit)
@@ -377,6 +389,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--all-projects", action="store_true")
     _add_common(s)
     s.set_defaults(func=cmd_stats)
+
+    s = sub.add_parser("hook-probe", help="hook entrypoint: record a redacted copy of the raw stdin payload (debugging aid)")
+    s.add_argument("event", help="hook event name, e.g. PostToolUse")
+    s.set_defaults(func=cmd_hook_probe)
     return p
 
 
@@ -385,6 +401,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         if args.cmd == "fingerprint":
             return cmd_fingerprint(args, None)
+        if args.cmd == "hook-probe":
+            return cmd_hook_probe(args, None)
         ledger = Ledger(args.db or default_db_path())
         try:
             return args.func(args, ledger)
