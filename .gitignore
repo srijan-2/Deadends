@@ -6,3 +6,4 @@ dist/
 .venv/
 *.db
 DEADENDS.md
+err*.txt
