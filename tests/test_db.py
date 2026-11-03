@@ -67,6 +67,46 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(self.add().seen_before, 0)
         self.assertEqual(self.add().seen_before, 1)
 
+    def test_repeated_add_merges_instead_of_duplicating(self):
+        a = self.add(approach="Use requests  without a venv")
+        b = self.add(approach="use requests without a VENV", fix="use the venv python")
+        self.assertEqual((b.duplicate_of, b.occurrences), (a.id, 2))
+        self.assertEqual(self.l.stats("proj")["attempts"], 1)
+        row = self.l.get_attempt(a.id)
+        self.assertEqual((row["fix"], row["occurrences"]), ("use the venv python", 2))
+        self.assertEqual([r["id"] for r in self.l.search("venv python")], [a.id])
+        c = self.add(approach="something different")  # same error, new approach = new attempt
+        self.assertIsNone(c.duplicate_of)
+        self.assertEqual(self.l.stats("proj")["attempts"], 2)
+
+    def test_same_approach_in_another_project_is_not_merged(self):
+        a = self.add(project="one")
+        b = self.add(project="two")
+        self.assertNotEqual(a.id, b.id)
+
+    def test_database_from_first_release_is_migrated(self):
+        import os
+        import sqlite3
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "old.db")
+            raw = sqlite3.connect(path)
+            raw.execute("""CREATE TABLE attempts(id INTEGER PRIMARY KEY AUTOINCREMENT, problem_id INTEGER,
+                project TEXT NOT NULL, approach TEXT NOT NULL, why TEXT, outcome TEXT NOT NULL,
+                error_redacted TEXT, error_kind TEXT, error_type TEXT, error_message TEXT, frames TEXT,
+                fp_strict TEXT, fp_loose TEXT, root_cause TEXT, fix TEXT, confidence TEXT, versions TEXT,
+                evidence TEXT, source TEXT NOT NULL DEFAULT 'manual', created_at TEXT NOT NULL)""")
+            raw.execute("INSERT INTO attempts(project, approach, outcome, created_at) VALUES('p','old row','failed','2026-01-01')")
+            raw.commit()
+            raw.close()
+            ledger = Ledger(path)
+            try:
+                self.assertEqual(ledger.get_attempt(1)["occurrences"], 1)
+                self.assertTrue(ledger.add_attempt(project="p", approach="new row").id > 1)
+            finally:
+                ledger.close()
+
     def test_validation(self):
         with self.assertRaises(ValueError):
             self.add(outcome="exploded")

@@ -74,7 +74,8 @@ def _short(text: Optional[str], width: int = 110) -> str:
 
 
 def _fmt_attempt(a: Dict[str, Any], indent: str = "  ") -> str:
-    lines = ["%s#%d [%s] %s  (%s)" % (indent, a["id"], a["outcome"], a["created_at"][:10], project_label(a["project"]))]
+    seen = "  seen %dx" % a["occurrences"] if a.get("occurrences", 1) > 1 else ""
+    lines = ["%s#%d [%s] %s  (%s)%s" % (indent, a["id"], a["outcome"], a["created_at"][:10], project_label(a["project"]), seen)]
     lines.append("%s  approach:   %s" % (indent, _short(a["approach"])))
     if a.get("problem"):
         lines.append("%s  problem:    %s" % (indent, _short(a["problem"])))
@@ -121,11 +122,15 @@ def cmd_add(args, ledger: Ledger) -> int:
         evidence=_kv(args.evidence, "--evidence"),
         source=args.source,
     )
-    lines = ["Logged attempt #%d (%s) in %s" % (result.id, args.outcome, project_label(project))]
+    if result.duplicate_of:
+        lines = ["Already logged as #%d (now seen %d times) - updated it instead of adding a duplicate"
+                 % (result.id, result.occurrences)]
+    else:
+        lines = ["Logged attempt #%d (%s) in %s" % (result.id, args.outcome, project_label(project))]
     if result.fp:
         lines.append("  error: %s: %s" % (result.fp.parsed.exc_type, _short(result.fp.parsed.message, 80)))
         lines.append("  fingerprint: strict=%s loose=%s" % (result.fp.strict, result.fp.loose))
-        if result.seen_before:
+        if result.seen_before and not result.duplicate_of:
             lines.append("  note: this exact error was logged %d time(s) before - run `deadends lookup`" % result.seen_before)
     if result.redacted:
         lines.append("  redacted before saving: %s" % ", ".join(result.redacted))
@@ -134,6 +139,8 @@ def cmd_add(args, ledger: Ledger) -> int:
         "strict": result.fp.strict if result.fp else None,
         "loose": result.fp.loose if result.fp else None,
         "seen_before": result.seen_before,
+        "duplicate_of": result.duplicate_of,
+        "occurrences": result.occurrences,
         "redacted": result.redacted,
     })
     return 0
@@ -241,7 +248,8 @@ def render_markdown(project: str, rows: List[Dict[str, Any]]) -> str:
         out.append("## %s" % title)
         for r in items:
             tag = "failed" if r["outcome"] == "failed" else "partly worked"
-            out.append("- **%s** - %s (%s)" % (_short(r["approach"], 140), tag, r["created_at"][:10]))
+            seen = ", seen %d times" % r["occurrences"] if r.get("occurrences", 1) > 1 else ""
+            out.append("- **%s** - %s (%s%s)" % (_short(r["approach"], 140), tag, r["created_at"][:10], seen))
             if r.get("error_type"):
                 out.append("  - Error: `%s: %s`" % (r["error_type"], _short(r["error_message"], 100)))
             if r.get("root_cause"):

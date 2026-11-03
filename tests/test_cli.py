@@ -42,6 +42,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual((stats["attempts"], stats["lookups"], stats["lookup_hits"]), (1, 2, 2))
         self.assertIn("venv", self.run_cli("search", "--project", "demo", "venv"))
 
+    def test_adding_the_same_attempt_twice_merges(self):
+        first = self.run_cli("add", "--project", "demo", "-a", "same thing", "-t", ERR)
+        second = self.run_cli("add", "--project", "demo", "-a", "same thing", "-t", ERR, "--fix", "pip install it")
+        self.assertIn("Logged attempt #1", first)
+        self.assertIn("Already logged as #1 (now seen 2 times)", second)
+        self.assertEqual(json.loads(self.run_cli("stats", "--project", "demo", "--json"))["attempts"], 1)
+        self.assertIn("seen 2 times", self.run_cli("export", "--project", "demo"))
+
     def test_lookup_no_record_does_not_touch_stats(self):
         self.run_cli("add", "--project", "demo", "-a", "x", "-t", ERR)
         self.run_cli("lookup", "--project", "demo", "-t", ERR, "--no-record")

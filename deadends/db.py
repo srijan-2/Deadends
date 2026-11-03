@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS attempts(
   versions TEXT,
   evidence TEXT,
   source TEXT NOT NULL DEFAULT 'manual',
+  occurrences INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_attempts_strict ON attempts(fp_strict);
@@ -85,6 +86,8 @@ class AddResult:
     fp: Optional[Fingerprint]
     redacted: List[str]
     seen_before: int = 0
+    duplicate_of: Optional[int] = None
+    occurrences: int = 1
 
 
 @dataclass
@@ -105,7 +108,24 @@ class Ledger:
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA)
+        self._migrate()
         self.fts = self._ensure_fts()
+
+    def _migrate(self) -> None:
+        cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(attempts)")}
+        if "occurrences" not in cols:
+            self.conn.execute("ALTER TABLE attempts ADD COLUMN occurrences INTEGER NOT NULL DEFAULT 1")
+            self.conn.commit()
+
+    def _reindex_fts(self, attempt_id: int) -> None:
+        if not self.fts:
+            return
+        row = self.conn.execute("SELECT * FROM attempts WHERE id=?", (attempt_id,)).fetchone()
+        self.conn.execute("DELETE FROM attempts_fts WHERE rowid=?", (attempt_id,))
+        self.conn.execute(
+            "INSERT INTO attempts_fts(rowid, approach, why, root_cause, fix, error_message) VALUES(?,?,?,?,?,?)",
+            (attempt_id, row["approach"], row["why"] or "", row["root_cause"] or "", row["fix"] or "", row["error_message"] or ""),
+        )
 
     def close(self) -> None:
         self.conn.close()
@@ -181,6 +201,39 @@ class Ledger:
                 "SELECT COUNT(*) FROM attempts WHERE fp_strict=?", (fp.strict,)
             ).fetchone()[0]
 
+        # Same project + same approach (ignoring case/spacing) + same exact error = the same attempt.
+        # Merge instead of duplicating, so hooks that log repeatedly don't flood the ledger.
+        norm_approach = " ".join(approach_c.split()).casefold()
+        dup = None
+        for row in self.conn.execute(
+            "SELECT * FROM attempts WHERE project=? AND fp_strict IS ?", (project, fp.strict if fp else None)
+        ):
+            if " ".join(row["approach"].split()).casefold() == norm_approach:
+                dup = row
+                break
+        if dup is not None:
+            sets, vals = ["occurrences = occurrences + 1"], []
+            for col, val in (("why", why_c), ("root_cause", root_c), ("fix", fix_c), ("confidence", confidence)):
+                if val is not None:
+                    sets.append("%s=?" % col)
+                    vals.append(val)
+            if versions_c:
+                sets.append("versions=?")
+                vals.append(json.dumps(versions_c))
+            if evidence_c:
+                sets.append("evidence=?")
+                vals.append(json.dumps(evidence_c))
+            if outcome != dup["outcome"]:
+                sets.append("outcome=?")
+                vals.append(outcome)
+            if problem_id and not dup["problem_id"]:
+                sets.append("problem_id=?")
+                vals.append(problem_id)
+            self.conn.execute("UPDATE attempts SET %s WHERE id=?" % ", ".join(sets), vals + [dup["id"]])
+            self._reindex_fts(dup["id"])
+            self.conn.commit()
+            return AddResult(dup["id"], fp, sorted(kinds), seen_before, dup["id"], dup["occurrences"] + 1)
+
         cur = self.conn.execute(
             """INSERT INTO attempts(problem_id, project, approach, why, outcome, error_redacted,
                  error_kind, error_type, error_message, frames, fp_strict, fp_loose, root_cause, fix,
@@ -236,13 +289,8 @@ class Ledger:
         if not sets:
             return False
         cur = self.conn.execute("UPDATE attempts SET %s WHERE id=?" % ", ".join(sets), values + [attempt_id])
-        if cur.rowcount and self.fts:
-            row = self.conn.execute("SELECT * FROM attempts WHERE id=?", (attempt_id,)).fetchone()
-            self.conn.execute("DELETE FROM attempts_fts WHERE rowid=?", (attempt_id,))
-            self.conn.execute(
-                "INSERT INTO attempts_fts(rowid, approach, why, root_cause, fix, error_message) VALUES(?,?,?,?,?,?)",
-                (attempt_id, row["approach"], row["why"] or "", row["root_cause"] or "", row["fix"] or "", row["error_message"] or ""),
-            )
+        if cur.rowcount:
+            self._reindex_fts(attempt_id)
         self.conn.commit()
         return bool(cur.rowcount)
 
