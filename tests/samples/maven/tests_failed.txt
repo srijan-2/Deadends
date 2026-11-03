@@ -1,0 +1,1 @@
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.22.2:test (default-test) on project demo: There are test failures.

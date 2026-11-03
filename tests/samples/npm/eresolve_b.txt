@@ -1,0 +1,11 @@
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: storefront@2.4.0
+npm error Found: vue@3.4.21
+npm error node_modules/vue
+npm error   vue@"^3.4.0" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer vue@"^2.6.0" from vue-awesome-swiper@4.1.1
+npm error A complete log of this run can be found in: C:\Users\bob\AppData\Local\npm-cache\_logs\2024-07-02T08_01_55_210Z-debug-0.log

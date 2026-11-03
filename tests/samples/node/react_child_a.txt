@@ -1,0 +1,3 @@
+Uncaught Error: Objects are not valid as a React child (found: object with keys {id, name}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (react-dom.development.js:13231:13)
+    at reconcileChildFibers (react-dom.development.js:14001:7)

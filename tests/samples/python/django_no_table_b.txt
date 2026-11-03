@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\dee\site\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+sqlite3.OperationalError: no such table: auth_user
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\dee\site\manage.py", line 30, in <module>
+    main()
+django.db.utils.OperationalError: no such table: auth_user

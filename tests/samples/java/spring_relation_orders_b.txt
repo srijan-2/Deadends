@@ -1,0 +1,6 @@
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [select o.id from orders o]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "orders" does not exist
+	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:239)
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "orders" does not exist
+  Position: 22
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2401)

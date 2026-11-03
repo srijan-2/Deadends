@@ -1,0 +1,7 @@
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] C:\dev\billing\src\main\java\com\other\Service.java:[30,17] cannot find symbol
+[ERROR]   symbol:   class Foo
+[ERROR]   location: class com.other.Service
+[INFO] 1 error

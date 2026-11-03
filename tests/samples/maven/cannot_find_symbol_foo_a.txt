@@ -1,0 +1,8 @@
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR :
+[INFO] -------------------------------------------------------------
+[ERROR] /home/alice/demo/src/main/java/com/acme/App.java:[12,9] cannot find symbol
+[ERROR]   symbol:   class Foo
+[ERROR]   location: class com.acme.App
+[INFO] 1 error
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile (default-compile) on project demo: Compilation failure

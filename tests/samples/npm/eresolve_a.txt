@@ -1,0 +1,12 @@
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR!
+npm ERR! While resolving: my-app@0.1.0
+npm ERR! Found: react@18.2.0
+npm ERR! node_modules/react
+npm ERR!   react@"^18.2.0" from the root project
+npm ERR!
+npm ERR! Could not resolve dependency:
+npm ERR! peer react@"^17.0.0" from react-beautiful-dnd@13.1.1
+npm ERR!
+npm ERR! A complete log of this run can be found in: /home/alice/.npm/_logs/2024-05-01T10_22_11_123Z-debug-0.log

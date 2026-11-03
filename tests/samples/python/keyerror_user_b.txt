@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "C:\dev\crm\views.py", line 130, in post
+    user = get_user(data)
+  File "C:\dev\crm\accounts.py", line 207, in get_user
+    return cache[data["user_id"]]
+KeyError: 'user_id'

@@ -1,0 +1,2 @@
+Error: Objects are not valid as a React child (found: object with keys {title, body, author}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (react-dom.development.js:12997:13)

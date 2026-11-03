@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/srv/api/handlers.py", line 88, in handle
+    user = get_user(payload)
+  File "/srv/api/users.py", line 41, in get_user
+    return db[payload["user_id"]]
+KeyError: 'user_id'

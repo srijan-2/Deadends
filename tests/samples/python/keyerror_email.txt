@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/srv/api/profile.py", line 19, in load_profile
+    return form["email"]
+KeyError: 'email'

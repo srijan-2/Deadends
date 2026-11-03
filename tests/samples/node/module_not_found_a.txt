@@ -1,0 +1,13 @@
+node:internal/modules/cjs/loader:1080
+  throw err;
+  ^
+
+Error: Cannot find module 'express'
+Require stack:
+- /home/alice/api/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1077:15)
+    at Module._load (node:internal/modules/cjs/loader:922:27)
+    at Module.require (node:internal/modules/cjs/loader:1143:19) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/home/alice/api/server.js' ]
+}

@@ -1,0 +1,4 @@
+org.springframework.jdbc.BadSqlGrammarException: PreparedStatementCallback; bad SQL grammar [select * from customers]; nested exception is org.postgresql.util.PSQLException: ERROR: relation "customers" does not exist
+Caused by: org.postgresql.util.PSQLException: ERROR: relation "customers" does not exist
+  Position: 15
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2676)

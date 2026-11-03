@@ -1,0 +1,13 @@
+2024-06-18 17:03:45.907 ERROR 9120 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   :
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.acme.orders.OrderService required a bean of type 'com.acme.orders.OrderRepository' that could not be found.
+
+Action:
+
+Consider defining a bean of type 'com.acme.orders.OrderRepository' in your configuration.

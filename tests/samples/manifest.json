@@ -1,0 +1,195 @@
+{
+  "_doc": "Each group = the same error seen in different environments (strict fingerprints must match). Groups sharing a family must differ in strict but match in loose. Groups in different families must differ in both.",
+  "groups": [
+    {
+      "id": "py-modulenotfound-requests",
+      "family": "py-modulenotfound",
+      "files": [
+        "python/modulenotfound_requests_a.txt",
+        "python/modulenotfound_requests_b.txt"
+      ]
+    },
+    {
+      "id": "py-modulenotfound-numpy",
+      "family": "py-modulenotfound",
+      "files": [
+        "python/modulenotfound_numpy.txt"
+      ]
+    },
+    {
+      "id": "py-keyerror-user_id",
+      "family": "py-keyerror",
+      "files": [
+        "python/keyerror_user_a.txt",
+        "python/keyerror_user_b.txt"
+      ]
+    },
+    {
+      "id": "py-keyerror-email",
+      "family": "py-keyerror",
+      "files": [
+        "python/keyerror_email.txt"
+      ]
+    },
+    {
+      "id": "py-connrefused-health",
+      "family": "py-connrefused",
+      "files": [
+        "python/connrefused_a.txt",
+        "python/connrefused_b.txt"
+      ]
+    },
+    {
+      "id": "py-django-no-such-table",
+      "family": "py-django-no-such-table",
+      "files": [
+        "python/django_no_table_a.txt",
+        "python/django_no_table_b.txt"
+      ]
+    },
+    {
+      "id": "node-reading-map",
+      "family": "node-reading-undefined",
+      "files": [
+        "node/reading_map_a.txt",
+        "node/reading_map_b.txt"
+      ]
+    },
+    {
+      "id": "node-reading-filter",
+      "family": "node-reading-undefined",
+      "files": [
+        "node/reading_filter.txt"
+      ]
+    },
+    {
+      "id": "node-module-not-found-express",
+      "family": "node-module-not-found",
+      "files": [
+        "node/module_not_found_a.txt",
+        "node/module_not_found_b.txt"
+      ]
+    },
+    {
+      "id": "node-econnrefused-db",
+      "family": "node-econnrefused",
+      "files": [
+        "node/econnrefused_a.txt",
+        "node/econnrefused_b.txt"
+      ]
+    },
+    {
+      "id": "react-child-id-name",
+      "family": "react-child",
+      "files": [
+        "node/react_child_a.txt"
+      ]
+    },
+    {
+      "id": "react-child-title-body",
+      "family": "react-child",
+      "files": [
+        "node/react_child_b.txt"
+      ]
+    },
+    {
+      "id": "java-npe-s",
+      "family": "java-npe",
+      "files": [
+        "java/npe_s_a.txt",
+        "java/npe_s_b.txt"
+      ]
+    },
+    {
+      "id": "java-npe-name",
+      "family": "java-npe",
+      "files": [
+        "java/npe_name.txt"
+      ]
+    },
+    {
+      "id": "spring-relation-orders",
+      "family": "spring-relation",
+      "files": [
+        "java/spring_relation_orders_a.txt",
+        "java/spring_relation_orders_b.txt"
+      ]
+    },
+    {
+      "id": "spring-relation-customers",
+      "family": "spring-relation",
+      "files": [
+        "java/spring_relation_customers.txt"
+      ]
+    },
+    {
+      "id": "spring-bean-orders",
+      "family": "spring-bean",
+      "files": [
+        "java/spring_bean_orders_a.txt",
+        "java/spring_bean_orders_b.txt"
+      ]
+    },
+    {
+      "id": "spring-bean-customers",
+      "family": "spring-bean",
+      "files": [
+        "java/spring_bean_customers.txt"
+      ]
+    },
+    {
+      "id": "npm-eresolve",
+      "family": "npm-eresolve",
+      "files": [
+        "npm/eresolve_a.txt",
+        "npm/eresolve_b.txt"
+      ]
+    },
+    {
+      "id": "npm-enoent-package-json",
+      "family": "npm-enoent",
+      "files": [
+        "npm/enoent_a.txt",
+        "npm/enoent_b.txt"
+      ]
+    },
+    {
+      "id": "maven-cfs-foo",
+      "family": "maven-cfs",
+      "files": [
+        "maven/cannot_find_symbol_foo_a.txt",
+        "maven/cannot_find_symbol_foo_b.txt"
+      ]
+    },
+    {
+      "id": "maven-cfs-bar",
+      "family": "maven-cfs-bar",
+      "files": [
+        "maven/cannot_find_symbol_bar.txt"
+      ]
+    },
+    {
+      "id": "maven-tests-failed",
+      "family": "maven-tests-failed",
+      "files": [
+        "maven/tests_failed.txt"
+      ]
+    },
+    {
+      "id": "bash-permission-denied",
+      "family": "bash-permission-denied",
+      "files": [
+        "generic/permission_denied_a.txt",
+        "generic/permission_denied_b.txt"
+      ]
+    },
+    {
+      "id": "docker-name-conflict",
+      "family": "docker-name-conflict",
+      "files": [
+        "generic/docker_conflict_a.txt",
+        "generic/docker_conflict_b.txt"
+      ]
+    }
+  ]
+}

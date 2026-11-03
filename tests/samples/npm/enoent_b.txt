@@ -1,0 +1,5 @@
+npm ERR! code ENOENT
+npm ERR! syscall open
+npm ERR! path C:\Users\bob\site\package.json
+npm ERR! errno -4058
+npm ERR! enoent ENOENT: no such file or directory, open 'C:\Users\bob\site\package.json'

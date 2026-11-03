@@ -1,0 +1,9 @@
+node:internal/modules/cjs/loader:1148
+  throw err;
+  ^
+
+Error: Cannot find module 'express'
+Require stack:
+- C:\Users\bob\svc\index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1145:15)
+    at Module._load (node:internal/modules/cjs/loader:986:27)

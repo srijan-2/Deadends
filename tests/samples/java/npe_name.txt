@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "name" is null
+	at com.acme.UserService.greet(UserService.java:33)
+	at com.acme.App.main(App.java:12)

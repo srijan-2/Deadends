@@ -1,0 +1,3 @@
+Exception in thread "pool-2-thread-1" java.lang.NullPointerException: Cannot invoke "String.length()" because "s" is null
+	at com.other.text.Strings.len(Strings.java:47)
+	at com.other.worker.Job.run(Job.java:88)

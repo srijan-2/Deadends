@@ -1,0 +1,3 @@
+TypeError: Cannot read properties of undefined (reading 'filter')
+    at applyFilters (/app/src/utils/filters.js:7:18)
+    at Object.<anonymous> (/app/src/index.js:30:3)

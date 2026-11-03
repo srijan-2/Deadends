@@ -1,0 +1,11 @@
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.acme.customers.CustomerService required a bean of type 'com.acme.customers.CustomerRepository' that could not be found.
+
+Action:
+
+Consider defining a bean of type 'com.acme.customers.CustomerRepository' in your configuration.

@@ -1,0 +1,4 @@
+[ERROR] COMPILATION ERROR :
+[ERROR] /home/alice/demo/src/main/java/com/acme/App.java:[18,5] cannot find symbol
+[ERROR]   symbol:   class Bar
+[ERROR]   location: class com.acme.App
