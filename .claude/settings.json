@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m unittest:*)",
+      "Bash(python3 scripts/eval_fingerprints.py:*)",
+      "Bash(python3 -m deadends:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ]
+  }
+}
