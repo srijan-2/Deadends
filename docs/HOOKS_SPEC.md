@@ -9,7 +9,8 @@ This file records what was verified at design time and what must be re-verified.
 |---|---|---|
 | `SessionStart` | create/resume session row; optionally inject a tiny project digest | optional, <= 800 chars, default on, `DEADENDS_SESSION_DIGEST=off` to disable |
 | `UserPromptSubmit` | record the prompt (redacted, truncated per `STORE_PROMPTS`) as a `prompt` event | no |
-| `PostToolUse` (matcher `Bash`, `Edit`, `Write`, `MultiEdit`) | record an `action`; on Bash failure create `failure`, infer problem/attempt, look up history | **only on a match**, <= 600 chars |
+| `PostToolUse` (matcher `Bash`, `Edit`, `Write`, `MultiEdit`) | record an `action`; infer problem/attempt, look up history | **only on a match**, <= 600 chars |
+| `PostToolUseFailure` (matcher `Bash`) | log the failed command as a `failed` attempt (`deadends hook post-tool-use-failure`) | no |
 | `Stop` | check for resolution of open problems; mark `stop` | no |
 | `SessionEnd` | close session, abandon open problems, opportunistic prune | no |
 
@@ -20,7 +21,7 @@ Ship `deadends hook-probe <event>`: writes the raw stdin JSON (after `redact()`)
 Install it for one real session, run a few commands (one succeeding, one failing, one with chained `&&`, an Edit, a prompt), then copy 1-2 payloads
 per event into `tests/fixtures/hooks/` (redacted, no real paths or names). Answer and write down in this file:
 - [ ] Bash `tool_response`: field holding the exit code? stdout and stderr separate or merged? any `interrupted` flag?
-- [ ] Does a failing Bash (non-zero exit) fire `PostToolUse` at all, or only a separate failure event?
+- [x] Does a failing Bash (non-zero exit) fire `PostToolUse` at all, or only a separate failure event? **Confirmed: a failing Bash fires a separate `PostToolUseFailure` event** (not `PostToolUse`), with `tool_name`, `tool_input` (`command`, `description`), `error` (starts `"Exit code N\n"` + traceback/output), `is_interrupt`, `duration_ms`, plus the common fields. See `tests/fixtures/hooks/post_tool_use_failure_modulenotfound.json`.
 - [ ] `UserPromptSubmit`: name of the prompt field.
 - [ ] `Stop` / `SessionEnd` / `SessionStart` fields (`source`, `reason`).
 - [ ] Payload size for large outputs (is `tool_response` truncated by Claude Code?).
