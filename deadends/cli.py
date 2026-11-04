@@ -212,6 +212,35 @@ def cmd_hook_probe(args, ledger: Optional[Ledger]) -> int:
     return 0
 
 
+def cmd_hook_post_tool_use_failure(args, ledger: Optional[Ledger]) -> int:
+    """Hook entrypoint: log a failed Bash command as an attempt. Always exits 0, prints nothing."""
+    from .hooks.log import log_error
+
+    try:
+        data = json.loads(sys.stdin.read())
+        if data.get("tool_name") != "Bash" or data.get("is_interrupt"):
+            return 0
+        command = (data.get("tool_input") or {}).get("command")
+        if not command:
+            return 0
+        project = detect_project(data.get("cwd"))
+        local = Ledger(args.db or default_db_path()) if ledger is None else ledger
+        try:
+            local.add_attempt(
+                project=project,
+                approach="ran: %s" % command,
+                outcome="failed",
+                error_text=data.get("error"),
+                source="hook",
+            )
+        finally:
+            if ledger is None:
+                local.close()
+    except Exception as exc:  # fail open: a hook must never break the session
+        log_error("hook-post-tool-use-failure", exc)
+    return 0
+
+
 def cmd_search(args, ledger: Ledger) -> int:
     project = None if args.all_projects else (args.project or detect_project())
     rows = ledger.search(" ".join(args.query), project=project, limit=args.limit)
@@ -393,6 +422,11 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("hook-probe", help="hook entrypoint: record a redacted copy of the raw stdin payload (debugging aid)")
     s.add_argument("event", help="hook event name, e.g. PostToolUse")
     s.set_defaults(func=cmd_hook_probe)
+
+    s = sub.add_parser("hook", help="hook entrypoints")
+    hook_sub = s.add_subparsers(dest="hook_cmd", required=True)
+    s2 = hook_sub.add_parser("post-tool-use-failure", help="hook entrypoint: log a failed Bash command")
+    s2.set_defaults(func=cmd_hook_post_tool_use_failure)
     return p
 
 
@@ -403,6 +437,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             return cmd_fingerprint(args, None)
         if args.cmd == "hook-probe":
             return cmd_hook_probe(args, None)
+        if args.cmd == "hook" and args.hook_cmd == "post-tool-use-failure":
+            return cmd_hook_post_tool_use_failure(args, None)
         ledger = Ledger(args.db or default_db_path())
         try:
             return args.func(args, ledger)
